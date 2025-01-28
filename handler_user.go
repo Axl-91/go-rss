@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Axl-91/go-rss/internal/auth"
 	"github.com/Axl-91/go-rss/internal/database"
 	"github.com/google/uuid"
 )
@@ -20,6 +21,7 @@ func (apiCfg *apiConfig) handlerCreateUser(wr http.ResponseWriter, r *http.Reque
 	err := decoder.Decode(&params)
 	if err != nil {
 		respondWithError(wr, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		return
 	}
 
 	user, err :=
@@ -32,6 +34,25 @@ func (apiCfg *apiConfig) handlerCreateUser(wr http.ResponseWriter, r *http.Reque
 
 	if err != nil {
 		respondWithError(wr, 400, fmt.Sprintf("Couldn't create user: %v", err))
+		return
+	}
+
+	respondWithJSON(wr, 201, user)
+}
+
+func (apiCfg *apiConfig) handlerGetUser(wr http.ResponseWriter, r *http.Request) {
+	apiKey, err := auth.GetAPIKey(r.Header)
+
+	if err != nil {
+		respondWithError(wr, 403, fmt.Sprintf("Auth error: %v", err))
+		return
+	}
+
+	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+
+	if err != nil {
+		respondWithError(wr, 403, fmt.Sprintf("Couldn't get user: %v", err))
+		return
 	}
 
 	respondWithJSON(wr, 200, user)
