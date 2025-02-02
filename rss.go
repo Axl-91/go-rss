@@ -2,12 +2,9 @@ package main
 
 import (
 	"encoding/xml"
-	"errors"
 	"io"
 	"net/http"
 	"time"
-
-	"github.com/gohugoio/hugo/tpl/data"
 )
 
 type RSSFeed struct {
