@@ -56,6 +56,7 @@ func main() {
 
 	v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
 	v1Router.Post("/users", apiCfg.handlerCreateUser)
+	v1Router.Get("/users/posts", apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUser))
 
 	v1Router.Get("/feeds", apiCfg.handlerGetFeeds)
 	v1Router.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
@@ -66,7 +67,7 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 
-	fmt.Printf("Sever starting on port: %v", PORT)
+	fmt.Printf("Sever starting on port: %v\n", PORT)
 	server := &http.Server{
 		Handler: router,
 		Addr:    ":" + PORT,
